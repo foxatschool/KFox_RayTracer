@@ -1,6 +1,8 @@
 ﻿#pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+#include <glm/gtx/norm.hpp>
 
 #include <cstdlib>
 #include <random>
@@ -19,12 +21,6 @@ namespace random
         generator().seed(value);
     }
 
-    /// <summary>
-    /// Generates a random integer within the specified inclusive range [min, max].
-    /// Both min and max values are included in the possible results.
-    /// </summary>
-    /// <param name="min">The minimum value (inclusive)</param>
-    /// <param name="max">The maximum value (inclusive)</param>
     /// <returns>A random integer between min and max (both inclusive)</returns>
     inline int getInt(int min, int max) {
         // Uniform distribution ensures each value in range has equal probability
@@ -32,20 +28,11 @@ namespace random
         return dist(generator());
     }
 
-    /// <summary>
-    /// Generates a random integer in the range [0, max-1].
-    /// Convenient for array indexing and similar use cases.
-    /// </summary>
-    /// <param name="max">The upper bound (exclusive) - result will be less than this value</param>
     /// <returns>A random integer between 0 (inclusive) and max (exclusive)</returns>
     inline int getInt(int max) {
         return getInt(0, max - 1);
     }
 
-    /// <summary>
-    /// Generates a random integer using the full range of the distribution.
-    /// Returns values across the entire range supported by the uniform_int_distribution.
-    /// </summary>
     /// <returns>A random integer from the full distribution range</returns>
     inline int getInt() {
         // Static distribution to avoid recreation overhead
@@ -53,13 +40,6 @@ namespace random
         return dist(generator());
     }
 
-    /// <summary>
-    /// Generates a random real number within the specified range [min, max).
-    /// The minimum value is inclusive, the maximum value is exclusive.
-    /// </summary>
-    /// <typeparam name="T">The floating-point type (float, double, long double). Defaults to float.</typeparam>
-    /// <param name="min">The minimum value (inclusive)</param>
-    /// <param name="max">The maximum value (exclusive)</param>
     /// <returns>A random real number of type T in the range [min, max)</returns>
     template <typename T = float>
     inline T getReal(T min, T max) {
@@ -110,5 +90,22 @@ namespace random
         // Convert polar coordinates to Cartesian coordinates
         // cos(θ) gives x-component, sin(θ) gives y-component
         return glm::vec2{ std::cos(radians), std::sin(radians) };
+    }
+
+    inline glm::vec3 inunitSphere()
+    {
+        glm::vec3 v;
+
+        do
+        {
+            v = getReal(glm::vec3{ -1 }, glm::vec3{ 1 });
+        } while (glm::length2(v) > 1.0);
+
+        return v;
+    }
+
+    inline glm::vec3 onUnitSphere()
+    {
+        return glm::normalize(inunitSphere());
     }
 }

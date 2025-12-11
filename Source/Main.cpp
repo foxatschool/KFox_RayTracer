@@ -2,12 +2,18 @@
 #include <SDL3/SDL.h>
 
 #include "Camera.h"
+#include "Scene.h"
 #include "Renderer.h"
 #include "Framebuffer.h"
+#include "Sphere.h"
+#include "Random.h"
+#include "Object.h"
 
 int main() {
-	constexpr int SCREEN_WIDTH = 800;
-	constexpr int SCREEN_HEIGHT = 600;
+	//constexpr int SCREEN_WIDTH = 1600;
+	//constexpr int SCREEN_HEIGHT = 1200;
+	constexpr int SCREEN_WIDTH = 640;
+	constexpr int SCREEN_HEIGHT = 480;
 
 	// create renderer
 	Renderer renderer;
@@ -17,8 +23,32 @@ int main() {
 	Framebuffer framebuffer(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	float aspectRatio = (float)framebuffer.width / (float)framebuffer.height;//framebuffer width divided by framebuffer height (float division)
-	Camera camera(70.0f, aspectRatio);
+	Camera camera(60.0f, aspectRatio);
 	camera.SetView({ 0, 0, 5 }, { 0, 0, 0 });
+
+	Scene scene; // after camera creation/initialization
+
+	auto red = std::make_shared<Lambertian>(color3_t{ 1.0f, 0.0f, 0.0f });
+	auto green = std::make_shared<Lambertian>(color3_t{ 0.0,1.0,0.0 });
+	auto blue = std::make_shared<Lambertian>(color3_t{ 0,0,1 });
+	auto light = std::make_shared<Emissive>(color3_t{ 1.0f, 1.0f, 1.0f }, 3.0f);
+	auto metal = std::make_shared<Metal>(color3_t{ 1.0f, 1.0f, 1.0f }, 0.0f);
+	std::shared_ptr<Material> materials[] = {red, green, blue, metal};
+
+	for (int i = 0; i < 15; i++) {
+		glm::vec3 position = random::getReal(glm::vec3{ -3.0f }, glm::vec3{ 3.0f });
+
+		std::unique_ptr<Object> sphere = std::make_unique<Sphere>(Transform{ position }, (float)random::getReal(0.2f, 0.5f), materials[random::getInt(0, 3)]);
+		scene.AddObject(std::move(sphere));
+	}
+
+	scene.SetSky(color3_t{ 0.3f, 0.4f, 0.6f }, color3_t{ 1.0f,1.0f,1.0f });
+	//scene.SetSky(color3_t{ 0.0f, 0.0f, 0.0f }, color3_t{ 1.0f,1.0f,1.0f });
+	// draw to frame buffer
+	framebuffer.Clear({ 0, 0, 0, 255 });
+	
+	// remove previous "static" code and replace with this
+	scene.Render(framebuffer, camera);
 
 	SDL_Event event;
 	bool quit = false;
@@ -35,9 +65,6 @@ int main() {
 			}
 		}
 
-		// draw to frame buffer
-		framebuffer.Clear({ 0, 0, 0, 255 });
-		for (int i = 0; i < 300; i++) framebuffer.DrawPoint(rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, { 255, 255, 255, 255 });
 
 		// update frame buffer, copy buffer pixels to texture
 		framebuffer.Update();

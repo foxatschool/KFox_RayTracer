@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-//#include "Color.h"
+#include "Color.h"
 
 
 struct ray_t
@@ -16,7 +16,7 @@ public:
 		direction{ direction } 
 	{}
 
-	glm::vec3 at(float t)
+	glm::vec3 at(float t) const
 	{
 		return origin + (t * direction);
 	}
@@ -27,12 +27,12 @@ public:
 	}
 };
 
-struct rayCastHit_t
+struct raycastHit_t
 {
-public:
-	glm::vec3 hitPoint;
-	glm::vec3 normal;
-	float distance;
+	glm::vec3 point;	// point of ray hit
+	glm::vec3 normal;	// normal of surface hit
+	float distance;	// distance from ray origin to hit
 
-	//color3_t collor;
+	//color3_t color;	// hit object material 
+	class Material* material;
 };

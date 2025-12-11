@@ -12,6 +12,7 @@ public:
 	bool CreateWindow(const std::string& name, int width, int height, bool fullscreen = false);
 	void Show();
 
+
 	void CopyFramebuffer(const class Framebuffer& framebuffer);
 
 public:
