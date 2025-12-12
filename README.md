@@ -1,150 +1,142 @@
-Software Renderer (C++ / OpenGL)
+Ray Shader (C++ / glm)
 Introduction
 
-This project is a custom C++ software renderer built on top of OpenGL. It implements a programmable rendering pipeline with support for vertex and fragment shaders, multiple lighting models, and real-time post-processing effects. Designed as an educational and experimental graphics engine, the renderer showcases how modern GPU-style features can be emulated or extended in a custom environment.
+This project is a lightweight C++ ray shader designed for experimenting with ray-based shading techniques without the overhead of a full ray tracer or rendering engine. It focuses on computing lighting, reflections, and material interactions through ray–surface evaluations using glm for all mathematical operations.
 
-The project uses SDL2 for window/context management and glm for math utilities.
+This repository is intended for graphics students, hobbyists, and researchers who want a minimal, flexible foundation for building ray-based shading experiments.
 
 Features
 
-Custom Rendering Pipeline
+Ray-Based Shading Pipeline
 
-Vertex processing, rasterization, and fragment shading.
+Computes surface color via ray–surface evaluation.
 
-Programmable shader stages.
+Supports custom shading functions.
 
-Lighting Models
+Material Models
 
-Gouraud shading (per-vertex lighting).
+Diffuse, specular, and reflective shading.
 
-Phong shading (per-fragment lighting).
+Configurable material parameters.
 
-Post-Processing Effects
+Lighting Support
 
-Configurable framebuffer passes.
+Point light sources.
 
-Placeholder for bloom, grayscale, or custom filters.
+Directional and ambient lighting.
 
-OpenGL Integration
+Geometry Support (depending on your implementation)
 
-Hardware-accelerated display.
+Spheres, planes, or custom scene primitives.
 
-Optional debugging utilities.
+Modular interface for adding new geometry types.
 
-Additional Capabilities
+Math Utilities
 
-SDL2 input handling.
+Powered by glm for vectors, matrices, and transforms.
 
-glm-based vector/matrix math.
+Extensible Architecture
 
-Modular architecture for adding new shaders or pipeline stages.
+Add new lighting models.
+
+Plug in new materials or BRDFs.
+
+Simple structure for experimentation.
 
 Installation
 Prerequisites
 
-Ensure that the following dependencies are installed on your system:
+Ensure you have the following installed on your system:
 
 C++17 or later
 
 CMake (recommended)
 
-OpenGL
-
-SDL2
-
 glm
 
 Build Instructions
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/yourusername/your-ray-shader.git
+cd your-ray-shader
 mkdir build && cd build
 cmake ..
 make
 
-Running
-./SoftwareRenderer
+Here’s a minimal example of how the shader class might be used:
 
-Usage
-Command-Line Options (if applicable)
---width <value>       Set window width
---height <value>      Set window height
---shader <name>       Choose a shader program
+Ray ray(origin, direction);
+HitInfo hit;
+if (scene.intersect(ray, hit)) {
+    glm::vec3 color = shader.shade(hit, scene);
+}
 
-In-App Controls
+Configuration Files
 
-W/A/S/D — Move camera
-
-Mouse — Look around
-
-1 / 2 — Switch lighting models (Gouraud / Phong)
-
-P — Toggle post-processing
-
-Esc — Exit
-
-(Customize this section based on your actual controls.)
+If your project uses JSON or other scene descriptions, mention them here.
 
 Technical Details
-Rendering Pipeline
+Ray Shading Pipeline
 
-Vertex Shader Stage:
+Ray Generation
 
-Applies model, view, and projection transforms.
+Created from camera or sampling strategy.
 
-Computes normals, view directions, and light vectors.
+Intersection
 
-Rasterization:
+Evaluates ray–primitive intersections.
 
-Custom triangle rasterizer.
+Stores hit position, normal, and material data.
 
-Perspective-correct interpolation.
+Shading
 
-Fragment Shader Stage:
+Implements lighting equations using scene lights.
 
-Implements lighting equations.
+Optional reflections or recursive shading.
 
-Supports material parameters and configurable shading models.
+Uses glm for all vector math operations.
 
-Lighting
+Materials
 
-Gouraud: Lighting computed per vertex and interpolated.
+Depending on your implementation:
 
-Phong: Normals interpolated and lighting calculated per pixel.
+Lambertian diffuse
 
-Post-Processing
+Phong/Blinn specular
 
-Rendered scenes are passed to a fullscreen quad for optional effects:
+Reflective materials
 
-Custom fragment passes.
+Procedural materials (if any)
 
-Easily extensible pipeline.
+Lights
+
+Point lights with attenuation.
+
+Directional lights for parallel rays.
+
+Ambient term for base illumination.
+
+Extensibility
+
+You can extend the shader by:
+
+Adding new BRDFs.
+
+Implementing refraction/transparency.
+
+Introducing global illumination or sampling features.
 
 Visual Showcase
 
-(Replace the placeholders below with real screenshots or GIFs.)
+<img width="322" height="263" alt="image" src="https://github.com/user-attachments/assets/70d3124b-9ff0-4d32-a841-285233026587" />
 
-Gouraud Shading Example
-
-Phong Shading Example
-
-Post-Processing Effects
-
-Attribution
-
-This project uses the following open-source libraries:
-
-SDL2
- — Windowing/input subsystem
+This project uses:
 
 glm
- — Mathematics library for graphics
+ — Mathematics library used for vector/matrix calculations.
 
-Optionally: any models, textures, or sample assets used (add at your discretion)
-
-If you’re using portions of external tutorials or references, list them here.
+If the project references external material, models, or inspiration, list them here as well.
 
 Conclusion
 
-This renderer demonstrates how a modern-style graphics pipeline can be built from scratch using C++ and lightweight library support. It is intended as a learning tool and a flexible base for experimenting with shader techniques, lighting models, and custom rendering logic.
+This C++ ray shader serves as a simple and effective foundation for exploring ray-based shading techniques. It is ideal for experimentation, educational purposes, or as a stepping stone toward a full ray tracer.
 
-Feel free to fork, contribute, or open issues for new features or improvements!
+Contributions, suggestions, and issue reports are welcome!
