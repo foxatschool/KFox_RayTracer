@@ -1,8 +1,8 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
-//#define GLM_ENABLE_EXPERIMENTAL
-//#include <glm/gtx/color_space.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/color_space.hpp>
 #include <algorithm>
 
 
@@ -54,12 +54,12 @@ inline color4_t ColorConvert(const SDL_Color& color)
 	return color4;
 }
 
-//inline color3_t HSVtoRGB(const color3_t& hsv)
-//{
-//	return glm::rgbColor(hsv);
-//}
-//
-//inline color3_t HSVtoRGB(const color3_t& hsv)
-//{
-//	return glm::rgbColor(hsv);
-//}
+inline color3_t HSVtoRGB(const color3_t& hsv)
+{
+	return glm::rgbColor(hsv);
+}
+
+inline color3_t HSVtoRGB(float hue, float saturation, float value)
+{
+	return glm::rgbColor(glm::vec3{ hue, saturation, value });;
+}

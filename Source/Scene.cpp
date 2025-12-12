@@ -2,26 +2,36 @@
 #include "Framebuffer.h"
 #include "Camera.h"
 #include "Color.h"
+#include "Random.h"
 #include <iostream>
 
-void Scene::Render(Framebuffer& framebuffer, const Camera& camera) {
+void Scene::Render(Framebuffer& framebuffer, const Camera& camera, int numSamples) {
 	// trace ray for every framebuffer pixel
-	for (int y = 0; y < framebuffer.height; y++) {
-		for (int x = 0; x < framebuffer.width; x++)	{
-			// set pixel (x,y) coordinates)
-			glm::vec2 pixel{ x, y };
-			// normalize (0 <-> 1) the pixel value (pixel / vec2{ framebuffer.width, framebuffer.height }
-			glm::vec2 point = pixel / glm::vec2{ framebuffer.width, framebuffer.height };
-			// flip the y value (bottom = 0, top = 1)
-			point.y = 1 - point.y;
+	for (int y = 0; y < framebuffer.height; y++) 
+	{
+		for (int x = 0; x < framebuffer.width; x++) 
+		{
+			// color will be accumulated with ray trace samples
+			color3_t color{ 0 };
+			// multi-sample for each pixel
+			for (int i = 0; i < numSamples; i++) 
+			{
+				// set pixel (x,y) coordinates)
+				glm::vec2 pixel{ x, y };
+				// add random value (0-1) to pixel valie, each sample should be a little different
+				pixel += glm::vec2{ random::getReal( 0.0, 1.0), random::getReal( 0.0, 1.0) };
+				// normalize (0 <-> 1) the pixel value (pixel / vec2{ framebuffer.width, framebuffer.height }
+				glm::vec2 point = pixel / glm::vec2{ framebuffer.width, framebuffer.height };
+				// flip the y value (bottom = 0, top = 1)
+				point.y = 1 - point.y;
 
-			// get ray from camera
-			ray_t ray = camera.GetRay(point);
-			// trace ray
-			
-			// 0 = min ray distance, 100 = max ray distance
-			color3_t color = Trace(ray, 0.0001f, 100.0f);
-
+				// get ray from camera
+				ray_t ray = camera.GetRay(point);
+				// trace ray
+				color += Trace(ray, 0, 100);
+			}
+			// get average color = (color / number samples)
+			color = color / glm::vec3{ (float)numSamples };
 			framebuffer.DrawPoint(x, y, ColorConvert(color));
 		}
 		std::cout << y << std::endl;
